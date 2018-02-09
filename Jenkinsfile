@@ -11,11 +11,12 @@ node {
         // Use the provided build script
         sh "./build versions/library-${imageMajorVersion}/x86_64/options"
         image = docker.image(imageName);
+
     }
     stage('Push image') {
         docker.withRegistry("https://${targetRegistry}", 'jenkins-chip-repo') {
             image.push()
-            imageName.push("${imageMajorVersion}")
+            image.push("${imageMajorVersion}")
         }
     }
 }
