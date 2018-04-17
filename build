@@ -18,10 +18,10 @@ image_build() {
 
 	[[ "$BUILDER_IMAGE" ]] || {
 		BUILDER_IMAGE="alpine-builder"
-		docker build -t "$BUILDER_IMAGE" builder
+		docker build -t "$BUILDER_IMAGE" --build-arg http_proxy="$http_proxy" builder
 	}
 
-	docker run -e "TRACE=$TRACE" --rm "$BUILDER_IMAGE" "${BUILD_OPTIONS[@]}" \
+	docker run -e "TRACE=$TRACE" -e "http_proxy=$http_proxy" --rm "$BUILDER_IMAGE" "${BUILD_OPTIONS[@]}" \
 		> "$version_dir/rootfs.tar.xz"
 }
 
@@ -41,7 +41,7 @@ build() {
 
 		# Build + tag images
 		for tag in "${TAGS[@]}"; do
-			docker build -t "$tag" "$version_dir"
+			docker build -t "$tag" --build-arg http_proxy="$http_proxy" "$version_dir"
 
 			if [[ "$CIRCLE_BUILD_NUM" ]]; then
 				{
